@@ -1,8 +1,9 @@
-import User from "../models/user.model.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import db from "../models/index.js";
+const { User } = db;
 
 // 🔐 Middleware to Verify JWT from Header or Cookie
 const verifyJWT = AsyncHandler(async (req, res, next) => {
@@ -17,10 +18,10 @@ const verifyJWT = AsyncHandler(async (req, res, next) => {
   try {
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    const user = await User.findByPk(decodedToken?._id, {
+    const user = await User.findByPk(decodedToken?.id, {
       attributes: { exclude: ["password_hash"] },
     });
-
+    
     if (!user) {
       throw new ApiError(401, "Invalid token, please login again!");
     }

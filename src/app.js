@@ -6,18 +6,24 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 
 import authRoutes from "./routes/auth.routes.js";
-import { globalErrorHandler, notFound } from "./middlewares/error.middleware.js";
-// import userRoutes from "./routes/user.routes.js"; // if needed
+import {
+  globalErrorHandler,
+  notFound,
+} from "./middlewares/error.middleware.js";
+import userAdminRoutes from "./routes/user.routes.js";
+import eventRoutes from "./routes/event.routes.js";
 
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:3000",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -25,7 +31,9 @@ app.use(morgan("dev"));
 
 // API routes with versioning
 app.use("/api/v1/auth", authRoutes);
-// app.use("/api/v1/users", userRoutes); // for admin/user ops
+app.use("/api/v1/admin/users", userAdminRoutes);
+app.use("/api/v1/events", eventRoutes);
+
 
 // 404 handler
 app.use("*", (req, res) => {

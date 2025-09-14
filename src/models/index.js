@@ -3,6 +3,7 @@ import config from "../config/index.js";
 
 // Import your models
 import UserModel from "./user.model.js";
+import EventModel from "./event.model.js";
 
 // Initialize Sequelize
 const sequelize = new Sequelize(
@@ -17,14 +18,16 @@ const sequelize = new Sequelize(
   }
 );
 
-// Initialize models
+// Initialize models with DataTypes
 const User = UserModel(sequelize);
+const Event = EventModel(sequelize);
 
 // Collect models + sequelize instance
 const db = {
   sequelize,
   Sequelize,
   User,
+  Event
 };
 
 export default db;
