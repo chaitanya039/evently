@@ -12,6 +12,7 @@ import {
 } from "./middlewares/error.middleware.js";
 import userAdminRoutes from "./routes/user.routes.js";
 import eventRoutes from "./routes/event.routes.js";
+import bookingRoutes from "./routes/booking.routes.js";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use(morgan("dev"));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin/users", userAdminRoutes);
 app.use("/api/v1/events", eventRoutes);
+app.use("/api/v1/bookings", bookingRoutes);
 
 
 // 404 handler

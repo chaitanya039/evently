@@ -5,126 +5,78 @@ import { createEventSchema, updateEventSchema } from "../validators/event.valida
 
 const { Event } = db;
 
-/**
- * @desc    Create a new event (Admin only)
- * @route   POST /api/v1/events
- * @access  Private (Admin)
- */
 const createEvent = async (req, res, next) => {
   try {
-    // Validate incoming data using Zod
     const parsed = createEventSchema.safeParse(req.body);
-    if (!parsed.success) {
-      throw new ApiError(400, "Validation failed", parsed.error.errors);
-    }
+    if (!parsed.success) throw new ApiError(400, "Validation failed", parsed.error.errors);
 
-    // Create event with current admin user as creator
-    const newEvent = await Event.create({
-      ...parsed.data,
-      created_by: req.user?.id, // assuming JWT middleware adds req.user
+    const newEvent = await Event.create({ ...parsed.data, created_by: req.user?.id });
+    return res.status(201).json(new ApiResponse(201, newEvent, "Event created successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllEvents = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, title, location, date } = req.query;
+    const offset = (page - 1) * limit;
+
+    const where = {};
+    if (title) where.title = { [db.Sequelize.Op.iLike]: `%${title}%` };
+    if (location) where.location = { [db.Sequelize.Op.iLike]: `%${location}%` };
+    if (date) where.date = date;
+
+    const { rows: events, count } = await Event.findAndCountAll({
+      where,
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [["date", "ASC"]],
     });
 
     return res
-      .status(201)
-      .json(new ApiResponse(201, newEvent, "Event created successfully"));
-  } catch (error) {
-    next(error); // Passes error to global error handler
-  }
-};
-
-/**
- * @desc    Get all events (Public or Admin)
- * @route   GET /api/v1/events
- * @access  Public
- */
-const getAllEvents = async (req, res, next) => {
-  try {
-    const events = await Event.findAll();
-    return res
       .status(200)
-      .json(new ApiResponse(200, events, "All events fetched successfully"));
+      .json(new ApiResponse(200, { events, total: count, page: parseInt(page), limit: parseInt(limit) }, "All events fetched successfully"));
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Get event by ID
- * @route   GET /api/v1/events/:id
- * @access  Public
- */
 const getEventById = async (req, res, next) => {
   try {
     const event = await Event.findByPk(req.params.id);
-
-    if (!event) {
-      throw new ApiError(404, "Event not found");
-    }
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, event, "Event retrieved successfully"));
+    if (!event) throw new ApiError(404, "Event not found");
+    return res.status(200).json(new ApiResponse(200, event, "Event retrieved successfully"));
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Update an event (Admin only)
- * @route   PUT /api/v1/events/:id
- * @access  Private (Admin)
- */
 const updateEvent = async (req, res, next) => {
   try {
     const parsed = updateEventSchema.safeParse(req.body);
-    if (!parsed.success) {
-      throw new ApiError(400, "Validation failed", parsed.error.errors);
-    }
+    if (!parsed.success) throw new ApiError(400, "Validation failed", parsed.error.errors);
 
     const event = await Event.findByPk(req.params.id);
+    if (!event) throw new ApiError(404, "Event not found");
 
-    if (!event) {
-      throw new ApiError(404, "Event not found");
-    }
-
-    // Update only the allowed fields
     await event.update(parsed.data);
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, event, "Event updated successfully"));
+    return res.status(200).json(new ApiResponse(200, event, "Event updated successfully"));
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * @desc    Delete an event (Admin only)
- * @route   DELETE /api/v1/events/:id
- * @access  Private (Admin)
- */
 const deleteEvent = async (req, res, next) => {
   try {
     const event = await Event.findByPk(req.params.id);
-
-    if (!event) {
-      throw new ApiError(404, "Event not found");
-    }
+    if (!event) throw new ApiError(404, "Event not found");
 
     await event.destroy();
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, null, "Event deleted successfully"));
+    return res.status(200).json(new ApiResponse(200, null, "Event deleted successfully"));
   } catch (error) {
     next(error);
   }
 };
 
-export {
-    createEvent,
-    getAllEvents,
-    getEventById,
-    updateEvent,
-    deleteEvent
-};
+export { createEvent, getAllEvents, getEventById, updateEvent, deleteEvent };

@@ -2,8 +2,8 @@ import { DataTypes } from 'sequelize';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const User = (sequelize) => {
-  const UserModel = sequelize.define(
+const UserModel = (sequelize) => {
+  const User = sequelize.define(
     'User',
     {
       id: {
@@ -37,7 +37,7 @@ const User = (sequelize) => {
   );
 
   // ✅ Sequelize HOOK (Before Save - hash password)
-  UserModel.beforeCreate(async (user) => {
+  User.beforeCreate(async (user) => {
     if (user.password_hash) {
       const salt = await bcrypt.genSalt(10);
       user.password_hash = await bcrypt.hash(user.password_hash, salt);
@@ -45,12 +45,12 @@ const User = (sequelize) => {
   });
 
   // ✅ Sequelize INSTANCE METHOD to check password
-  UserModel.prototype.isPasswordCorrect = async function (inputPassword) {
+  User.prototype.isPasswordCorrect = async function (inputPassword) {
     return await bcrypt.compare(inputPassword, this.password_hash);
   };
 
   // ✅ Sequelize INSTANCE METHOD to generate JWT
-  UserModel.prototype.generateAccessToken = function () {
+  User.prototype.generateAccessToken = function () {
     return jwt.sign(
       {
         id: this.id,
@@ -66,11 +66,11 @@ const User = (sequelize) => {
   };
 
   // Associations can be defined here if needed later
-  UserModel.associate = (models) => {
+  User.associate = (models) => {
     // UserModel.hasMany(models.Booking, { foreignKey: 'user_id' });
   };
 
-  return UserModel;
+  return User;
 };
 
-export default User;
+export default UserModel;

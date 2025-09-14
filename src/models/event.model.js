@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 
-const Event = (sequelize) => {
-  const EventModel = sequelize.define(
+const EventModel = (sequelize) => {
+  const Event = sequelize.define(
     "Event",
     {
       id: {
@@ -44,16 +44,17 @@ const Event = (sequelize) => {
     }
   );
 
-  EventModel.associate = (models) => {
-    EventModel.belongsTo(models.User, {
+  Event.associate = (models) => {
+    Event.belongsTo(models.User, {
       foreignKey: "created_by",
       as: "creator",
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     });
+    Event.hasMany(models.Booking, { foreignKey: "event_id", as: "bookings" });
   };
-
-  return EventModel;
+  
+  return Event;
 };
 
-export default Event;
+export default EventModel;
