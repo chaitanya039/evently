@@ -2,9 +2,14 @@
 import app from "./app.js";
 import db from "./models/index.js";
 import config from "./config/index.js";
+import redis from "./utils/redis.js";
 
 const startServer = async () => {
   try {
+    // ✅ Test Redis connection
+    const pong = await redis.ping();
+    console.log(`📦 Redis connected: ${pong}`); // should print "PONG"
+    
     // Test DB connection
     await db.sequelize.authenticate();
     console.log(`✅ Database connection established on port ${config.DB.PORT}`);
