@@ -7,14 +7,14 @@ It supports **bookings with concurrency safety, waitlists, notifications, cachin
 ---
 
 ## ✨ Features  
-- 🔑 **Authentication & Authorization** – JWT auth, role-based access (User/Admin)  
-- 📅 **Events Management** – CRUD operations for events  
-- 🎟️ **Bookings** – Concurrency-safe seat booking with Redis locks  
-- ⏳ **Waitlists** – Automated waitlist promotion via BullMQ  
-- 🔔 **Notifications** – Powered by job queues  
-- 📊 **Analytics** – Top events, daily booking counts, insights  
-- ⚡ **Caching** – Redis caching with namespace invalidation  
-- 🛠️ **Admin Dashboard** – Bull Board UI at `/api/v1/admin/queues`  
+- **Authentication & Authorization** – JWT auth, role-based access (User/Admin)  
+- **Events Management** – CRUD operations for events  
+- **Bookings** – Concurrency-safe seat booking with Redis locks  
+- **Waitlists** – Automated waitlist promotion via BullMQ  
+- **Notifications** – Powered by job queues  
+- **Analytics** – Top events, daily booking counts, insights  
+- **Caching** – Redis caching with namespace invalidation  
+- 🛠**Admin Dashboard** – Bull Board UI at `/api/v1/admin/queues`  
 
 ---
 
