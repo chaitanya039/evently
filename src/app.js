@@ -45,7 +45,7 @@ app.use("/api/v1/bookings", bookingRoutes);
 
 // 404 handler
 app.use("*", (req, res) => {
-  res.status(404).json({ success: false, message: "API endpoint not found." });
+  res.status(404).json({ success: false, message: "API endpoint not found.", documentation: "https://documenter.getpostman.com/view/17192321/2sB3HqGdFX" });
 });
 
 app.use(notFound);
