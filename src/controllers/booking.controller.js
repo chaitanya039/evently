@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import redis from "../utils/redis.js";
 import BookingQueue from "../queues/booking.queue.js";
 import db from "../models/index.js";
+import { invalidateNamespace } from "../utils/cache.js";
 const { Booking, Event, WaitListEntry } = db;
 
 export const createBooking = AsyncHandler(async (req, res) => {
@@ -47,8 +48,8 @@ export const createBooking = AsyncHandler(async (req, res) => {
   }
 
   // Invalidate caches for user and event bookings
-  await redis.del(`booking:/api/v1/bookings`);
-  await redis.del(`event:/api/v1/events/${event_id}`);
+  await invalidateNamespace("bookings");
+  await invalidateNamespace("events");
 
   return res.status(201).json(
     new ApiResponse(201, booking, "Booking confirmed")
@@ -85,9 +86,9 @@ export const cancelBooking = AsyncHandler(async (req, res) => {
   booking.status = "cancelled";
   await booking.save();
 
-  // Invalidate cache
-  await redis.del(`booking:/api/v1/bookings`);
-  await redis.del(`event:/api/v1/events/${booking.event_id}`);
+  // Invalidate caches for user and event bookings
+  await invalidateNamespace("bookings");
+  await invalidateNamespace("events");
 
   // Optional: Notify waitlist here (handled in job)
   await BookingQueue.add("booking-cancelled", {

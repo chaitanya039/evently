@@ -2,6 +2,7 @@ import db from "../models/index.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
+import { invalidateNamespace } from "../utils/cache.js";
 
 const { User } = db;
 
@@ -74,6 +75,9 @@ const updateUserById = AsyncHandler(async (req, res) => {
   user.role = role || user.role;
 
   await user.save();
+  
+  // Clear the cache after update where cache key starts with users prefix
+  await invalidateNamespace("users");
 
   res
     .status(200)
@@ -90,7 +94,10 @@ const deleteUserById = AsyncHandler(async (req, res) => {
   }
 
   await user.destroy();
-
+  
+   // Clear the cache after update where cache key starts with users prefix
+  await invalidateNamespace("users");
+  
   res
     .status(200)
     .json(new ApiResponse(200, {}, "User deleted successfully"));
