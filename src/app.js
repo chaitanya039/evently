@@ -14,6 +14,7 @@ import {
 import userAdminRoutes from "./routes/user.routes.js";
 import eventRoutes from "./routes/event.routes.js";
 import bookingRoutes from "./routes/booking.routes.js";
+import analyticsRoutes from "./routes/analytics.routes.js";
 
 dotenv.config();
 
@@ -32,11 +33,12 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 
 // Queue Visualization
-app.use("/admin/queues", serverAdapter.getRouter());
+app.use("/api/v1/admin/queues", serverAdapter.getRouter());
 
 // API routes with versioning
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin/users", userAdminRoutes);
+app.use("/api/v1/admin/analytics", analyticsRoutes);
 app.use("/api/v1/events", eventRoutes);
 app.use("/api/v1/bookings", bookingRoutes);
 

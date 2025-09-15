@@ -16,7 +16,7 @@ export const cache = (prefix = "") =>
 
         return res
           .status(200)
-          .json(new ApiResponse(200, JSON.parse(cachedData), "Cache hit"));
+          .json({ ...JSON.parse(cachedData), source: "Cache hit" });
       }
 
       // Override res.json to store data in Redis before sending response
