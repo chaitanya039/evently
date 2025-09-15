@@ -3,12 +3,12 @@ import pkg from "bullmq";
 import db from "../models/index.js";
 
 const { Queue, Worker } = pkg;
-const { Booking, Event, WaitListEntry } = db;
+const { Booking, Event, WaitlistEntry } = db;
 
 const connection = new IORedis({
   host: process.env.REDIS_HOST || "127.0.0.1",
   port: process.env.REDIS_PORT || 6379,
-  maxRetriesPerRequest: null, // Add this line
+  maxRetriesPerRequest: null, 
 });
 
 // Create queue (no QueueScheduler needed in v4)
@@ -43,7 +43,7 @@ const BookingWorker = new Worker(
           return;
         }
 
-        const nextWaitlistEntry = await WaitListEntry.findOne({
+        const nextWaitlistEntry = await WaitlistEntry.findOne({
           where: { event_id },
           order: [["joined_at", "ASC"]],
         });

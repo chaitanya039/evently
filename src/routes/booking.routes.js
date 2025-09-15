@@ -16,6 +16,6 @@ router.post("/", createBooking);
 router.get("/", cache("bookings"), getUserBookings);
 
 // Cancel booking
-router.patch("/:id/cancel", cancelBooking);
+router.patch("/:bookingId/cancel", cancelBooking);
 
 export default router;

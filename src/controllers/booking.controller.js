@@ -47,8 +47,8 @@ export const createBooking = AsyncHandler(async (req, res) => {
   }
 
   // Invalidate caches for user and event bookings
-  await redis.del(`booking:/api/bookings`);
-  await redis.del(`event:/api/events/${event_id}`);
+  await redis.del(`booking:/api/v1/bookings`);
+  await redis.del(`event:/api/v1/events/${event_id}`);
 
   return res.status(201).json(
     new ApiResponse(201, booking, "Booking confirmed")
@@ -58,14 +58,12 @@ export const createBooking = AsyncHandler(async (req, res) => {
 export const getUserBookings = AsyncHandler(async (req, res) => {
   const user_id = req.user.id;
   
-  console.log(user_id);
-
   const bookings = await Booking.findAll({
     where: { user_id },
     include: [{ model: Event, as: "event", attributes: ["title", "date", "location"] }],
     order: [["booked_at", "DESC"]],
   });
-
+  
   return res
     .status(200)
     .json(new ApiResponse(200, bookings, "User bookings fetched"));
@@ -88,8 +86,8 @@ export const cancelBooking = AsyncHandler(async (req, res) => {
   await booking.save();
 
   // Invalidate cache
-  await redis.del(`booking:/api/bookings`);
-  await redis.del(`event:/api/events/${booking.event_id}`);
+  await redis.del(`booking:/api/v1/bookings`);
+  await redis.del(`event:/api/v1/events/${booking.event_id}`);
 
   // Optional: Notify waitlist here (handled in job)
   await BookingQueue.add("booking-cancelled", {

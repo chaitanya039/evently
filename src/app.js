@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import serverAdapter from "./utils/bullBoard.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import {
@@ -29,6 +30,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
+
+// Queue Visualization
+app.use("/admin/queues", serverAdapter.getRouter());
 
 // API routes with versioning
 app.use("/api/v1/auth", authRoutes);

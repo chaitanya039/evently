@@ -35,8 +35,8 @@ const WaitlistEntryModel = (sequelize) => {
   );
 
   WaitlistEntry.associate = (models) => {
-    WaitlistEntry.belongsTo(models.User, { foreignKey: "user_id" });
-    WaitlistEntry.belongsTo(models.Event, { foreignKey: "event_id" });
+    WaitlistEntry.belongsTo(models.User, { foreignKey: "user_id", as: "user" });
+    WaitlistEntry.belongsTo(models.Event, { foreignKey: "event_id", as: "event" });
   };
 
   return WaitlistEntry;
