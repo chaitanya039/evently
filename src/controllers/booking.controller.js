@@ -62,7 +62,7 @@ export const getUserBookings = AsyncHandler(async (req, res) => {
 
   const bookings = await Booking.findAll({
     where: { user_id },
-    include: [{ model: Event, attributes: ["title", "date", "location"] }],
+    include: [{ model: Event, as: "event", attributes: ["title", "date", "location"] }],
     order: [["booked_at", "DESC"]],
   });
 

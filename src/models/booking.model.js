@@ -31,8 +31,8 @@ const BookingModel = (sequelize) => {
   });
   
   Booking.associate = (models) => {
-    Booking.belongsTo(models.User, { foreignKey: 'user_id' });
-    Booking.belongsTo(models.Event, { foreignKey: 'event_id', as: 'event' });
+    Booking.belongsTo(models.User, { foreignKey: 'user_id', as: "user" });
+    Booking.belongsTo(models.Event, { foreignKey: 'event_id', as: "event" });
   }
 
   return Booking;
